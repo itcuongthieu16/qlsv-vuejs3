@@ -127,15 +127,17 @@
 </template>
 
 <script>
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 export default {
     props: ['students'],
     methods: {
         editStudent(index) {
             this.$emit('edit', index)
-            console.log("OK");
         },
         deleteStudent(index) {
             this.$emit('delete', index)
+            toast.success('Xoá sinh viên thành công!');
         },
     }
 }

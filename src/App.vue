@@ -8,14 +8,15 @@
         </div>
         <div>
           <student-list :students="students" v-on:edit="editStudent" v-on:delete="deleteStudent"></student-list>
-          <edit-student-form v-if="selectedStudent !== null" :selected-student="selectedStudent" v-on:save="saveStudent"
-            v-on:cancel="cancelEdit"></edit-student-form>
+          <div class="overlay" v-if="showEditForm">
+            <edit-student-form :selected-student="selectedStudent" v-on:save="saveStudent"
+              v-on:cancel="cancelEdit"></edit-student-form>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import AddStudentForm from './components/AddStudentForm.vue';
 import StudentList from './components/StudentList.vue';
@@ -26,6 +27,7 @@ export default {
     return {
       students: JSON.parse(localStorage.getItem('students') || '[]'),
       selectedStudent: null,
+      showEditForm: false
     }
   },
 
@@ -36,6 +38,7 @@ export default {
     },
     editStudent(index) {
       this.selectedStudent = { ...this.students[index] }
+      this.showEditForm = true
     },
     saveStudent(updatedStudent) {
       const index = this.students.findIndex(student => student.name === updatedStudent.name && student.age === updatedStudent.age)
@@ -43,13 +46,15 @@ export default {
         this.students[index] = updatedStudent
         localStorage.setItem('students', JSON.stringify(this.students))
         this.selectedStudent = null
+        this.showEditForm = false
       }
     },
     cancelEdit() {
       this.selectedStudent = null
+      this.showEditForm = false
     },
     deleteStudent(index) {
-      if (confirm('Are you sure you want to delete this student?')) {
+      if (confirm('Bạn có chắc muốn xoá chứ?')) {
         this.students.splice(index, 1)
         localStorage.setItem('students', JSON.stringify(this.students))
       }
@@ -59,5 +64,17 @@ export default {
   components: { AddStudentForm, StudentList, EditStudentForm }
 }
 </script>
-
-<style></style>
+<style>
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+</style>

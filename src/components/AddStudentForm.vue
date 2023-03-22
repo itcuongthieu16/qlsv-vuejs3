@@ -48,6 +48,8 @@
 </template>
 
 <script>
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css'
 export default {
     data() {
         return {
@@ -57,8 +59,28 @@ export default {
 
     methods: {
         addStudent() {
-            this.$emit('add', this.newStudent)
-            this.newStudent = { masv: '', tensv: '', ngaysinh: '', gioitinh: '', makhoa: '', tenkhoa: '' }
+            if (
+                this.newStudent.masv &&
+                this.newStudent.tensv &&
+                this.newStudent.ngaysinh &&
+                this.newStudent.gioitinh &&
+                this.newStudent.makhoa &&
+                this.newStudent.tenkhoa
+            ) {
+                this.$emit('add', this.newStudent);
+                this.newStudent = {
+                    masv: '',
+                    tensv: '',
+                    ngaysinh: '',
+                    gioitinh: '',
+                    makhoa: '',
+                    tenkhoa: ''
+                };
+                toast.success('Thêm sinh viên thành công!');
+            }
+            else {
+                toast.error('Vui lòng nhập đầy đủ thông tin!');
+            }
         }
     }
 
