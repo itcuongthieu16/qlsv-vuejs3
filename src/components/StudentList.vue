@@ -11,16 +11,16 @@
                             clip-rule="evenodd"></path>
                     </svg>
                 </div>
-                <input type="text" id="table-search"
+                <input v-model="search" type="text" id="table-search"
                     class="block p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded w-80 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Tìm kiếm...">
             </div>
-            <div class="flex items-center">
-                <button
+            <!-- <div class="flex items-center">
+                <button @click="onClickData"
                     class="bg-transparent hover:bg-blue-500 text-[#3f7fbf] font-semibold hover:text-white py-[6px] px-4 border border-blue-500 hover:border-transparent rounded">
                     Tìm kiếm
                 </button>
-            </div>
+            </div> -->
         </div>
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
             <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -56,37 +56,6 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                    <td class="w-4 p-4">
-                        <div class="flex items-center">
-                            <input id="checkbox-table-search-1" type="checkbox"
-                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                            <label for="checkbox-table-search-1" class="sr-only">checkbox</label>
-                        </div>
-                    </td>
-                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                        26565
-                    </th>
-                    <td class="px-6 py-4">
-                        Thiều Trần Cương
-                    </td>
-                    <td class="px-6 py-4">
-                        2002-06-16
-                    </td>
-                    <td class="px-6 py-4">
-                        Nam
-                    </td>
-                    <td class="px-6 py-4">
-                        CS
-                    </td>
-                    <td class="px-6 py-4">
-                        CNTT
-                    </td>
-                    <td class="px-6 py-4">
-                        <a href="#" class="font-medium text-blue-600 dark:text-blue-500 hover:underline">Sửa</a>/
-                        <a href="#" class="font-medium text-red-600 dark:text-blue-500 hover:underline">Xoá</a>
-                    </td>
-                </tr>
                 <tr v-for="(student, index) in students" :key="index"
                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     <td class="w-4 p-4">
@@ -121,6 +90,8 @@
                             class="font-medium text-red-600 dark:text-blue-500 hover:underline">Xoá</a>
                     </td>
                 </tr>
+                <div v-if="students.length === 0">Không có kết quả phù
+                    hợp...</div>
             </tbody>
         </table>
     </div>
@@ -130,7 +101,32 @@
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 export default {
+    data() {
+        return {
+            search: "",
+        }
+    },
     props: ['students'],
+
+    computed: {
+        students() {
+            return this.students.filter(student => {
+                const masv = student.masv.toLowerCase()
+                const tensv = student.tensv.toLowerCase()
+                const ngaysinh = student.ngaysinh.toLowerCase()
+                const gioitinh = student.gioitinh.toLowerCase()
+                const makhoa = student.makhoa.toLowerCase()
+                const tenkhoa = student.tenkhoa.toLowerCase()
+                const search = this.search.toLowerCase()
+                return masv.includes(search) ||
+                    tensv.includes(search) ||
+                    ngaysinh.includes(search) ||
+                    gioitinh.includes(search) ||
+                    makhoa.includes(search) ||
+                    tenkhoa.includes(search)
+            })
+        }
+    },
     methods: {
         editStudent(index) {
             this.$emit('edit', index)
@@ -139,6 +135,14 @@ export default {
             this.$emit('delete', index)
             toast.success('Xoá sinh viên thành công!');
         },
+
+        // onClickData() {
+        //     return this.students.filter(student => {
+        //         const tensv = student.tensv.toLowerCase()
+        //         const search = this.search.toLowerCase()
+        //         return tensv.includes(search)
+        //     })
+        // }
     }
 }
 </script>
